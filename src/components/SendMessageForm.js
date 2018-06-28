@@ -1,11 +1,15 @@
 import React from 'react'
 
-function SendMessageForm(props) {  
-    return (
-        <div className="message">
-        
-        </div>
-    )
+class SendMessageForm extends React.Component {
+    render() {
+        return (
+            <form className="send-message-form">
+                <input
+                    placeholder="SendMessageForm"
+                    type="text" />
+            </form>
+        )
+    }
 }
 
 export default SendMessageForm
