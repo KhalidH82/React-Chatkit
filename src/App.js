@@ -20,6 +20,7 @@ class App extends React.Component {
         this.sendMessage = this.sendMessage.bind(this)
         this.subscribeToRoom = this.subscribeToRoom.bind(this)
         this.getRooms = this.getRooms.bind(this)
+        this.createRoom = this.createRoom.bind(this)
     } 
     
     componentDidMount() {
@@ -62,32 +63,44 @@ class App extends React.Component {
                 }
             }
         })
-        .then (room => {
-             this.setState({
+        .then(room => {
+            this.setState({
                 roomId: room.id
             })
             this.getRooms()
         })
-        .catch(err => console.log('error', err))
+        .catch(err => console.log('error on subscribing to room: ', err))
     }
     
     sendMessage(text) {
         this.currentUser.sendMessage({
             text,
-            roomId: 10484500
+            roomId: this.state.roomId
         })
+    }
+    
+    createRoom(name) {
+        this.currentUser.createRoom({
+            name
+        })
+        .then(room => this.subscribeToRoom(room.id))
+        .catch(err => console.log('error with createRoom: ', err))
     }
     
     render() {
         return (
             <div className="app">
                 <RoomList
-                    roomId={this.state.roomId}
                     subscribeToRoom={this.subscribeToRoom}
-                    rooms={[...this.state.joinableRooms, ...this.state.joinedRooms]} />
-                <MessageList messages={this.state.messages} />
-                <SendMessageForm sendMessage={this.sendMessage} />
-                <NewRoomForm />
+                    rooms={[...this.state.joinableRooms, ...this.state.joinedRooms]}
+                    roomId={this.state.roomId} />
+                <MessageList 
+                    roomId={this.state.roomId}
+                    messages={this.state.messages} />
+                <SendMessageForm
+                    disabled={!this.state.roomId}
+                    sendMessage={this.sendMessage} />
+                <NewRoomForm createRoom={this.createRoom} />
             </div>
         );
     }
